@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<body>
+
+<form>
+	<select id="mySelect" size=1>
+	</select>
+</form>
+<br>
+
+<script type="text/javascript">
+var connection = new WebSocket('ws://'+location.hostname+':81/', ['arduino']);
+
+connection.onopen = function () { 
+	connection.send('GET_TEMP'); 
+	console.log("connection opened");
+};
+
+connection.onerror = function (error) {
+	console.log('WebSocket Error ', error); 
+};
+
+connection.onmessage = function(evt) { 
+	// handle websocket message. update attributes or values of elements that match the name on incoming message
+	console.log("Full message=", evt.data);
+	
+	//split message by delimiter into a string array
+	var msgArray = evt.data.split(","); 
+	
+	//get a reference to our listbox
+	var x = document.getElementById("mySelect");
+	
+	//add each element of the message as a separate line in the listbox
+	msgArray.forEach(function(element) {
+		console.log(element);
+		var option = document.createElement("option");
+		option.text = "";
+		x.add(option);
+		x.size = x.size + 1
+	});
+};
+
+document.getElementById('mySelect').ondblclick = function() {
+	console.log("Double Clicked item:", this.options[this.selectedIndex].value);
+});
+
+</script>
+
+</body>
+
+</html>
